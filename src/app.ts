@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-import { notFound } from "../stoker/middlewares";
+import { notFound, onError } from "../stoker/middlewares";
 
 const app = new OpenAPIHono({});
 
@@ -8,10 +8,15 @@ app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-// I am using notFound handler from stoker
+app.get("/error", (c) => {
+  c.status(422);
+  throw new Error("Test error");
+});
+
 // I added a stoker directory and copied the stoker code to my project
-// https://github.com/w3cj/stoker/blob/main/src/middlewares/not-found.ts
+// https://github.com/w3cj/stoker
 // You can also: npm install stoker
 app.notFound(notFound);
+app.onError(onError);
 
 export default app;
